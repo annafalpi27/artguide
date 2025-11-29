@@ -1,4 +1,6 @@
+import base64
 import hashlib
+import io
 import logging
 import os
 import uuid
@@ -59,33 +61,45 @@ class QdrantDB:
 
         logger.info(f"Qdrant updated with {len(paintings)} embeddings")
 
-    def search(self, image_path: str) -> List[Dict]:
+    def search(self, image_input: str) -> List[Dict]:
         """Return the top matching paintings for a given image."""
         logger.info("Searching for a painting...")
 
-        with Image.open(image_path) as img:
+        try:
+            if len(image_input) > 100:  # pure base64
+                image_bytes = base64.b64decode(image_input)
+                img = Image.open(io.BytesIO(image_bytes))
+            else:
+                img = Image.open(image_input)
+
             img_embedding = self.model.encode(img)
 
-        results = self.client.search(
-            collection_name=self.collection_name,
-            query_vector=img_embedding.tolist(),
-            query_filter={},
-            limit=self.TOP_K,
-        )
-
-        matches = []
-        for hit in results:
-            matches.append(
-                {
-                    "title": hit.payload["title"],
-                    "artist": hit.payload["artist"],
-                    "image_url": hit.payload["image_url"],
-                    "url": hit.payload["url"],
-                    "score": hit.score,
-                }
+            results = self.client.search(
+                collection_name=self.collection_name,
+                query_vector=img_embedding.tolist(),
+                query_filter={},
+                limit=self.TOP_K,
             )
 
-        return matches
+            matches = []
+            for hit in results:
+                matches.append(
+                    {
+                        "title": hit.payload["title"],
+                        "artist": hit.payload["artist"],
+                        "image_url": hit.payload["image_url"],
+                        "url": hit.payload["url"],
+                        "score": hit.score,
+                    }
+                )
+
+            return matches
+        except Exception as e:
+            logger.error(f"Error during search: {str(e)}")
+            raise
+        finally:
+            if 'img' in locals():
+                img.close()
 
     def scroll(self, batch_size: int = 100, limit: int = None) -> Generator[List[Dict], None, None]:
         """Generator that retrieves all documents from QdrantDB in batches."""
@@ -111,9 +125,12 @@ class QdrantDB:
 
 if __name__ == "__main__":
     load_dotenv()
+
+    image_path = "/home/ubuntu/artguide/img/matrimoni_arnolfini.jpg"
+    with open(image_path, 'rb') as image_file:
+        image_bytes = image_file.read()
+        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+
     db = QdrantDB()
-    results = db.search("/home/afalceto/artguide/img/matrimoni_arnolfini.jpg")
+    results = db.search(image_base64)
     print(results[0])
-    # a = db.scroll(batch_size=10, limit=2)
-    # for batch in a:
-    #     print(len(batch))

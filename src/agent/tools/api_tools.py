@@ -2,7 +2,7 @@ import logging
 from typing import Dict, List
 
 import numpy as np
-from requests import get, post
+from requests import post
 
 
 logging.basicConfig(
@@ -19,8 +19,8 @@ class APITools:
     def search_painting(self, image_path: str) -> List[Dict]:
         """Searches for a painting in the Qdrant DB."""
 
-        params = {"image_path": image_path}
-        response = get(url=f"{self.base_url}/search", params=params)
+        params = {"image_data": image_path}
+        response = post(url=f"{self.base_url}/search", json=params)
         return response.json()
 
     def synthesize_speech(self, text: str, speaker: str, language: str) -> Dict:

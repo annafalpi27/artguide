@@ -1,3 +1,4 @@
+import base64
 import os
 import time
 from dotenv import load_dotenv
@@ -54,7 +55,11 @@ class ArtGuide:
     # ========================= NODES =========================
 
     def search_image_node(self, state: State) -> State:
-        results = self.api_tools.search_painting(state["image_path"])
+        # encode image to reach the API
+        with open(state["image_path"], 'rb') as image_file:
+            image_bytes = image_file.read()
+            image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+        results = self.api_tools.search_painting(image_base64)
         return {"results": results}
 
     def set_top_painting_node(self, state: State) -> State:
@@ -170,5 +175,5 @@ class ArtGuide:
 if __name__ == "__main__":
     load_dotenv()
     agent = ArtGuide({"language": "en", "speaker": "female", "duration": "short"})
-    agent.run(image_path="/home/afalceto/artguide/img/matrimoni_arnolfini.jpg")
-
+    image_path = "/home/ubuntu/artguide/img/matrimoni_arnolfini.jpg"
+    agent.run(image_path=image_path)

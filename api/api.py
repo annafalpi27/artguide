@@ -1,7 +1,7 @@
 import time
 from typing import Literal
 from dotenv import load_dotenv
-from fastapi import FastAPI, Query
+from fastapi import FastAPI
 from pydantic import BaseModel
 
 from src.services.piper_speaker import PIPER_VOICE_MAPPER, PiperSpeaker
@@ -25,9 +25,13 @@ def status():
     return {"status": "healthy"}
 
 
-@app.get("/search")
-def search(image_path: str = Query(...)):
-    results = db.search(image_path)
+class ImageSearchRequest(BaseModel):
+    image_data: str  # Base64 encoded image
+
+
+@app.post("/search")
+def search(request: ImageSearchRequest):
+    results = db.search(request.image_data)
     return results
 
 
