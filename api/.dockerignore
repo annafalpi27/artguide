@@ -1,0 +1,11 @@
+# do not copy unnecessay files
+tts/models/
+tts/models/*
+dashboard
+
+__pycache__/
+*.pyc
+.git/
+.venv/
+*.log
+.env

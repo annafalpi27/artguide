@@ -1,0 +1,22 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: api/Dockerfile
+    ports:
+      - "7005:7005"
+    env_file:
+      - ../.env
+    environment:
+      - PYTHONPATH=/artguide
+      - LD_PRELOAD=/artguide/.venv/lib/python3.11/site-packages/scikit_learn.libs/libgomp-947d5fa1.so.1.0.0
+      - TMPDIR=/artguide/tmp 
+    restart: unless-stopped
+    container_name: artguide-api
+    volumes:
+      # to use repo models and not copy them into the image
+      - ../tts/models:/artguide/tts/models:ro
+      - ../img:/artguide/img:ro
+      - ../tmp:/artguide/tmp:ro
+    tmpfs:
+      - /tmp

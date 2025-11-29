@@ -5,6 +5,7 @@ import uuid
 from typing import Dict, Generator, List
 from PIL import Image
 
+from dotenv import load_dotenv
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct
 from sentence_transformers import SentenceTransformer
@@ -109,6 +110,7 @@ class QdrantDB:
 
 
 if __name__ == "__main__":
+    load_dotenv()
     db = QdrantDB()
     results = db.search("/home/afalceto/artguide/img/matrimoni_arnolfini.jpg")
     print(results[0])

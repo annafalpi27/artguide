@@ -1,5 +1,5 @@
-qdrant_config = {"collection": "paintings_II"}
+qdrant_config = {"collection": "paintings"}
 
-api_config = {"host": "localhost", "port": 8000}
+api_config = {"host": "localhost", "port": 7005}
 
 tts_config = {"path": "tts/models"}

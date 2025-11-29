@@ -1,11 +1,14 @@
 import time
 from typing import Literal
+from dotenv import load_dotenv
 from fastapi import FastAPI, Query
 from pydantic import BaseModel
 
 from src.services.piper_speaker import PIPER_VOICE_MAPPER, PiperSpeaker
 from src.services.qdrant_db import QdrantDB
 
+
+load_dotenv()
 app = FastAPI()
 
 db = QdrantDB()
