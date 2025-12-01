@@ -43,7 +43,7 @@ class ArtGuide:
         self.n_words = self.DURATION_TO_NUM_WORDS[config["duration"]]
 
         # Tools
-        api_url = f"http://{api_config['host']}:{api_config['port']}"
+        api_url = api_config['url']
         self.llm_tools = LLMTools(self.llm)
         self.api_tools = APITools(api_url)
         self.utils = BaseTools()
@@ -175,5 +175,6 @@ class ArtGuide:
 if __name__ == "__main__":
     load_dotenv()
     agent = ArtGuide({"language": "en", "speaker": "female", "duration": "short"})
-    image_path = "/home/ubuntu/artguide/img/matrimoni_arnolfini.jpg"
+    image_path = "/home/afalceto/artguide/img/matrimoni_arnolfini.jpg"
+    # image_path = "/home/ubuntu/artguide/img/matrimoni_arnolfini.jpg"
     agent.run(image_path=image_path)
