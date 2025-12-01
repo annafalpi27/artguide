@@ -1,0 +1,2 @@
+[server]
+command = "PYTHONPATH=. streamlit run dashboard/main.py"
