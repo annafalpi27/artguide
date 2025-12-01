@@ -1,8 +1,12 @@
-import streamlit as st
+from pathlib import Path
+import sys
 
-from dashboard.components.page_configurator import PageConfigurator
-from dashboard.translations import TEXT_TRANSLATIONS as tt
+root_path = Path(__file__).parent.parent
+sys.path.insert(0, str(root_path))
 
+import streamlit as st  # noqa
+from dashboard.components.page_configurator import PageConfigurator # noqa
+from dashboard.translations import TEXT_TRANSLATIONS as tt # noqa
 
 config = PageConfigurator().configure()
 
