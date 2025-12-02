@@ -52,7 +52,7 @@ class QdrantDB:
         for painting, embedding in zip(paintings, embeddings):
             points.append(
                 PointStruct(
-                    id=self.to_uuid(painting.get("id")),
+                    id=self.to_uuid(painting.get("wikiart_id")),
                     vector=embedding.tolist(),
                     payload=painting,
                 )

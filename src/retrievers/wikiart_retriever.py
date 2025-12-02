@@ -5,7 +5,7 @@ import urllib
 
 from typing import Dict
 
-from retrievers.wikipedia_retriever import WikipediaRetriever
+from src.retrievers.wikipedia_retriever import WikipediaRetriever
 from src.retrievers.constants import USER_AGENTS
 
 logging.basicConfig(

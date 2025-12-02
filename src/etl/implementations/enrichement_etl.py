@@ -2,9 +2,9 @@ import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Generator, List
 
-from etl.base_paintings_etl import BasePaintingsETL
+from src.etl.base_paintings_etl import BasePaintingsETL
 from src.retrievers.wikiart_retriever import WikiArtRetriever
-from services.qdrant_db import QdrantDB
+from src.services.qdrant_db import QdrantDB
 
 
 logging.basicConfig(

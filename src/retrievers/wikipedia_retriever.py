@@ -2,7 +2,7 @@ import random
 from typing import Optional
 import requests
 
-from retrievers.constants import USER_AGENTS
+from src.retrievers.constants import USER_AGENTS
 
 
 class WikipediaRetriever:

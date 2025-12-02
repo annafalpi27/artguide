@@ -3,9 +3,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 from typing import Dict, Generator, List
 
-from etl.base_paintings_etl import BasePaintingsETL
+from dotenv import load_dotenv
+
+from src.etl.base_paintings_etl import BasePaintingsETL
 from src.retrievers.wikiart_retriever import WikiArtRetriever
-from services.qdrant_db import QdrantDB
+from src.services.qdrant_db import QdrantDB
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(name)s - %(message)s"
@@ -82,5 +84,6 @@ class WikiArtETL(BasePaintingsETL):
 
 
 if __name__ == "__main__":
+    load_dotenv()
     etl = WikiArtETL(batch_size=600, workers=10)
     etl.run()
