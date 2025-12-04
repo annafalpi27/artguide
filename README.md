@@ -16,11 +16,9 @@ Crucially, the **CLIP** and **Piper TTS** models are **self-hosted** on custom i
 
  distributed through the project's **API** , ensuring low-latency multimedia services.
 
-The entire user interface is built using the **Streamlit** framework for rapid development and is hosted for public access at `https://artguide-dashboard.streamlit.app/`.
+The entire user interface is built using the **Streamlit** framework for rapid development and is hosted for public access at  <a href="https://artguide-dashboard.streamlit.app/" target="_blank">https://artguide-dashboard.streamlit.app/</a>.
 
-<div style="text-align: center;">
-  <img src="img/README/ui.png" width="500">
-</div>
+<img src="img/README/ui.png" width="500">
 
 ## ⚙️ Technical Description
 
@@ -30,28 +28,17 @@ The entire user interface is built using the **Streamlit** framework for rapid d
 
 The **Contrastive Language-Image Pre-training (CLIP)** model is one of the core intelligence sources in ArtGuide. It is a powerful, **multi-modal model** that was trained by linking corresponding images and text descriptions.
 
-<table style="width: 100%; border-collapse: collapse;">
-  <tr>
-    <td style="vertical-align: top; padding-right: 20px; width: 65%;">
-      <p>
-        CLIP is a deep neural network capable of generating high-dimensional vectors (embeddings) that represent both images and text in the <b>same latent space</b>. The power of CLIP lies in its ability to understand the semantic relationship between an image (like an artwork) and any descriptive text. Because it maps them to the same vector space, we can search for a text query (e.g., "painting of a sad dog") and retrieve the most relevant artwork images, and vice-versa.
-      </p>
-      <p>
-        Once the CLIP model converts an artwork image into its high-dimensional vector representation (the embedding), we need a system optimized for <b>Vector Similarity Search (VSS)</b>. QdrantDB allows the ArtGuide Agent to efficiently index and search through millions of art embeddings.
-      </p>
-      <p>
-        For technical reference on the model's architecture, the model can be found on Hugging Face: <a href="https://huggingface.co/openai/CLIP-ViT-Base-Patch32" target="_blank">CLIP-ViT-Base-Patch32</a>
-      </p>
-    </td>
-    <td style="text-align: center; vertical-align: top; width: 35%;">
-      <img src="img/README/CLIP-Text2Img-Retrieval-Embedding0Product-Search-Fashion.gif" style="max-width: 100%; height: auto;" alt="CLIP Example">
-    </td>
-  </tr>
-</table>
+CLIP is a deep neural network capable of generating high-dimensional vectors (embeddings) that represent both images and text in the <b>same latent space</b>. The power of CLIP lies in its ability to understand the semantic relationship between an image (like an artwork) and any descriptive text. Because it maps them to the same vector space, we can search for a text query (e.g., "painting of a sad dog") and retrieve the most relevant artwork images, and vice-versa.
+
+Once the CLIP model converts an artwork image into its high-dimensional vector representation (the embedding), we need a system optimized for <b>Vector Similarity Search (VSS)</b>. QdrantDB allows the ArtGuide Agent to efficiently index and search through millions of art embeddings.
+
+For technical reference on the model's architecture, the model can be found on Hugging Face: <a href="https://huggingface.co/openai/CLIP-ViT-Base-Patch32" target="_blank">CLIP-ViT-Base-Patch32</a>
+
+
+<img src="img/README/CLIP-Text2Img-Retrieval-Embedding0Product-Search-Fashion.gif" width="500">
 
 The **CLIP model is deployed via a custom API** to ensure optimal performance and resource efficiency. Since the model is self-hosted, the latency for generating embeddings is minimized compared to relying on loading into memory the model each time an instance of the ArtGuide Agent.
 
-clip-vit-base-patch32)
 
 ### 💾 Data Ingestion and ETL
 
@@ -66,30 +53,23 @@ The ETL process is managed by concurrent threads and queues to maximize efficien
 * **Load:** Consumes the fully processed, vectorized data from the final queue and persists it into the **Qdrant vector database** .
 
 ```mermaid
----
-config:
- layout: elk
----
 flowchart LR
-    EX["<b>Extract Stage</b><br>
-        <i>Main thread</i>"] -. <code>yield</code> .-> TQ[("Transform Queue")]
-    TQ --> TR["<b>Transform Stage</b><br>
-        <i>TransformWorker Thread</i><br>
-       ThreadPoolExecutor"]
-    TR -. <code>N workers</code> .-> LQ[("Load Queue")]
-    LQ --> LO["<b>Load Stage</b><br>
-        <i>LoadWorker Thread</i>"]
-    LO --> n2["Qdrant DB"]
-    n3["WikiArt Org"] --> EX
-
-    n2@{ img: "https://avatars.githubusercontent.com/u/73504361?s=280&v=4", h: 50, w: 50, pos: "t", constraint: "on"}
-    n3@{ img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTN2um41qphP6s7C4QV6M9B_16cROCOyEi8bg&s", h: 50, w: 50, pos: "t", constraint: "on"}
-     EX:::Aqua
-     TR:::Peach
-     LO:::Sky
-    classDef Aqua stroke-width:1px, stroke-dasharray:none, stroke:#46EDC8, fill:#DEFFF8, color:#378E7A
-    classDef Peach stroke-width:1px, stroke-dasharray:none, stroke:#FBB35A, fill:#FFEFDB, color:#8F632D
-    classDef Sky stroke-width:1px, stroke-dasharray:none, stroke:#374D7C, fill:#E2EBFF, color:#374D7C
+    n3["🎨 WikiArt Org"] --> EX["<b>Extract Stage</b><br><i>Main thread</i>"]
+    EX -. yield .-> TQ[("Transform<br>Queue")]
+    TQ --> TR["<b>Transform Stage</b><br><i>TransformWorker Thread</i><br>ThreadPoolExecutor<br> N workers"]
+    TR --> LQ[("Load<br>Queue")]
+    LQ --> LO["<b>Load Stage</b><br><i>LoadWorker Thread</i>"]
+    LO --> n2["🔍 Qdrant DB"]
+    
+    classDef Aqua stroke-width:2px, stroke:#46EDC8, fill:#DEFFF8, color:#378E7A
+    classDef Peach stroke-width:2px, stroke:#FBB35A, fill:#FFEFDB, color:#8F632D
+    classDef Sky stroke-width:2px, stroke:#374D7C, fill:#E2EBFF, color:#374D7C
+    classDef Queue stroke-width:2px, stroke:#999, fill:#f9f9f9, color:#333
+    
+    class EX Aqua
+    class TR Peach
+    class LO Sky
+    class TQ,LQ Queue
 ```
 
 The design of the ETL pipeline maximizes efficiency through specialized parallelism:
